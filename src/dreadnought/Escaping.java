@@ -1,6 +1,8 @@
 
 package dreadnought;
 
+import robocode.ScannedRobotEvent;
+
 
 public class Escaping extends State{
 
@@ -8,17 +10,24 @@ public class Escaping extends State{
 		super(m_robot, m_info);
 	}
 
-
-
-
 	@Override
-	void turn() {
-		// TODO
+	public void turn() {
+		switch(m_info.m_inerState) {
+			//case 0 -> Heading to the corner ...
+			case 0 -> {
+				
+			}
+			//case 1 -> Enemy found, evading...
+			case 1 -> {
+				
+			}
+			//case 2 -> Correcting path ...
+		} 
 	}
 
 	@Override
-	void onScannedRobot(StateInfo info) {
-		// TODO
+	public void onScannedRobot(ScannedRobotEvent e) {
 	}
+
 	
 }
