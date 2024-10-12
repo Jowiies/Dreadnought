@@ -6,6 +6,8 @@ import robocode.ScannedRobotEvent;
 
 
 public class EnemyDetection extends State{
+	
+	private static final double MARGIN = 25;
 
 	public EnemyDetection(Dreadnought m_robot, StateInfo m_info) {
 		super(m_robot, m_info);
@@ -33,24 +35,18 @@ public class EnemyDetection extends State{
 				double[] corner = getFurthesCorner(m_info.m_enemyX, m_info.m_enemyY);
 				m_info.m_coordX = corner[0];
 				m_info.m_coordY = corner[1];
-
-				m_info.m_directionAngle = getAngleToPoint(m_info.m_coordX,m_info.m_coordY);
 				
 				out.println("Corner coords -> " + m_info.m_coordX + ", " + m_info.m_coordY);
-				out.println("Corner angle direction -> " + m_info.m_directionAngle);
-			
-				m_robot.setAdjustRadarForRobotTurn(false);
 				
 				m_info.m_fi = true;	
 			}
 		}
-
 	}
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) 
 	{
-		out.println("A robot has been scaned !!!");
+		out.println("A robot has been scanned !!!");
 		
 		m_info.m_enemyBearing = e.getBearing();
 		m_info.m_enemyDistance = e.getDistance();
@@ -60,13 +56,13 @@ public class EnemyDetection extends State{
 
 	private double[] getFurthesCorner(double enemicX, double enemicY) 
 	{
-		double width = m_robot.getBattleFieldWidth();
-		double height = m_robot.getBattleFieldHeight();
+		double width = m_robot.getBattleFieldWidth() - MARGIN;
+		double height = m_robot.getBattleFieldHeight() - MARGIN;
 
 		double[][] cantonades = {
-		    {0, 0},
-		    {width, 0},
-		    {0, height},
+		    {MARGIN, MARGIN},
+		    {width, MARGIN},
+		    {MARGIN, height},
 		    {width, height}
 		};
 
@@ -92,12 +88,5 @@ public class EnemyDetection extends State{
 		return Math.sqrt(pow((x2 - x1),2) + pow((y2 - y1),2));
 	}
 
-	// Method to calculate the angle from your robot to a given point (x, y)
-	public double getAngleToPoint(double x, double y) 
-	{
-		double dx = x - m_robot.getX();
-		double dy = y - m_robot.getY();
-		double angle = Math.toDegrees(Math.atan2(dx, dy));
-		return angle;
-	}
+
 }
