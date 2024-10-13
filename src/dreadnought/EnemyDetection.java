@@ -16,11 +16,11 @@ public class EnemyDetection extends State{
 	@Override
 	public void turn() 
 	{
+		m_robot.setAdjustRadarForRobotTurn(true);
 		switch (m_info.m_inerState) {
 			// case 0 -> Searching for the enemy.
 			case 0 -> {
-				m_robot.setAdjustRadarForRobotTurn(true);
-				m_robot.setTurnRadarRight(10);				
+				m_robot.setTurnRadarRight(360);				
 			}
 			// case 1 -> Enemy found, calculating corner and direction.
 			case 1 -> {
@@ -69,15 +69,13 @@ public class EnemyDetection extends State{
 		double[] mostDistantciaCantonada = cantonades[0];
 		double maxDistancia = distance(enemicX, enemicY, cantonades[0][0], cantonades[0][1]);
 
-		for (int i = 0; i < cantonades.length; i++) {
-		    double[] cantonada = cantonades[i];
-
-		    double dist = distance(enemicX, enemicY, cantonada[0], cantonada[1]);
-
-		    if (dist > maxDistancia) {
-			maxDistancia = dist;
-			mostDistantciaCantonada = cantonada;
-		    }
+		for (double[] cantonada : cantonades) {
+			double dist = distance(enemicX, enemicY, cantonada[0], cantonada[1]);
+			
+			if (dist > maxDistancia) {
+				maxDistancia = dist;
+				mostDistantciaCantonada = cantonada;
+			}
 		}
 
 		return mostDistantciaCantonada;
@@ -87,6 +85,4 @@ public class EnemyDetection extends State{
 	{
 		return Math.sqrt(pow((x2 - x1),2) + pow((y2 - y1),2));
 	}
-
-
 }
