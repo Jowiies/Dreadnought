@@ -22,7 +22,7 @@ public class StateInfo
 	
 	boolean m_fi;
 	
-	double m_coordX, m_coordY;
+	int m_coordX, m_coordY;
 	
 	double m_directionAngle;
 	

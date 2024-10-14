@@ -11,6 +11,8 @@ public class Dreadnought extends AdvancedRobot
 	@Override
 	public void run() 
 	{
+		setAdjustRadarForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
 		if (state == null) {
 			state = new EnemyDetection(this, new StateInfo());
 		}

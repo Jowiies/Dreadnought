@@ -33,8 +33,8 @@ public class EnemyDetection extends State{
 				m_info.m_enemyY = m_robot.getY() + Math.cos(absBearing) * m_info.m_enemyDistance;
 
 				double[] corner = getFurthesCorner(m_info.m_enemyX, m_info.m_enemyY);
-				m_info.m_coordX = corner[0];
-				m_info.m_coordY = corner[1];
+				m_info.m_coordX = (int)corner[0];
+				m_info.m_coordY = (int)corner[1];
 				
 				out.println("Corner coords -> " + m_info.m_coordX + ", " + m_info.m_coordY);
 				
