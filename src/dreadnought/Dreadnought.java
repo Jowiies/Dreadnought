@@ -1,6 +1,8 @@
 package dreadnought;
 
 import robocode.AdvancedRobot;
+import robocode.HitRobotEvent;
+import robocode.HitWallEvent;
 import robocode.ScannedRobotEvent;
 
 
@@ -30,6 +32,16 @@ public class Dreadnought extends AdvancedRobot
 	public void onScannedRobot(ScannedRobotEvent e) 
 	{
 		state.onScannedRobot(e);
+	}
+	
+	@Override
+	public void onHitWall(HitWallEvent event) {
+		
+	}
+	
+	@Override
+	public void onHitRobot(HitRobotEvent event) {
+		
 	}
 	
 	private void setState(State state)

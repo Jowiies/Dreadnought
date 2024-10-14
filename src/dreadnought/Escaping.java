@@ -2,6 +2,8 @@
 package dreadnought;
 
 import static java.lang.System.out;
+import robocode.HitRobotEvent;
+import robocode.HitWallEvent;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
@@ -19,12 +21,15 @@ public class Escaping extends State
 	public void turn() 
 	{
 		m_info.m_directionAngle = getAngleToPoint(m_info.m_coordX,m_info.m_coordY);
-				
+		oscillate();
+		//m_robot.setTurnRadarRight(Double.POSITIVE_INFINITY);
 		switch(m_info.m_inerState) {
 
 			//case 0 -> Heading to the corner ...
 			case 0 -> {
-				oscillate();
+				m_robot.setAdjustRadarForRobotTurn(true);
+				m_robot.setAdjustRadarForGunTurn(true);
+				
 				out.println("moving to the corner...");
 				if (goTo((int)m_info.m_coordX, (int)m_info.m_coordY)) {
 					m_robot.stop();
@@ -34,13 +39,15 @@ public class Escaping extends State
 			//case 1 -> Evading the enemy if necessary ...
 			
 			case 1 -> {
-				if (m_info.m_enemyDistance < 200) {  // Only evade if the enemy is close
-					getEnemyCoords();
-					oscillate();
-					evade();
-				} else {
-					m_info.m_inerState = 0;  // Return to original behavior when the enemy is far enough
-				}
+				out.println("case1");
+				//if (getDistanceToPoint(m_info.m_enemyX,m_info.m_enemyY) < 100) {
+					evade((int)m_info.m_coordX, (int)m_info.m_coordY);
+				//}else {
+					m_info.m_inerState = 0;
+
+				//}
+				
+
 			}
 			
 		}
@@ -51,13 +58,16 @@ public class Escaping extends State
 	{
 		m_info.m_enemyBearing = m_robot.getHeading() + e.getBearing();
 		m_info.m_enemyDistance = e.getDistance();
+		getEnemyCoords();
 		m_info.m_inerState = 1;
 	}
 
 		// Method to calculate the angle from your robot to a given point (x, y)
 	private double getAngleToPoint(double x, double y) 
 	{
-		return Math.toDegrees(Math.atan2(x - m_robot.getX(), y - m_robot.getY()));
+		return Utils.normalRelativeAngle(
+			Math.atan2(x,y) - m_robot.getHeadingRadians()
+		);
 	}
 	
 	private void getEnemyCoords() {
@@ -75,15 +85,12 @@ public class Escaping extends State
 
 		x = x - m_robot.getX();
 		y = y - m_robot.getY();
-		double goAngle = Utils.normalRelativeAngle(
-			Math.atan2(x,y) - m_robot.getHeadingRadians()
-		);
 		
-		m_robot.setTurnRightRadians(goAngle);
+		m_robot.setTurnRightRadians(getAngleToPoint(x,y));
 
 		double distance = Math.hypot(x, y);
 		if (distance > 0.01) {
-			m_robot.setAhead(Math.cos(goAngle) * distance);
+			m_robot.setAhead(Math.cos(getAngleToPoint(x,y)) * distance);
 			return false;
 		}
 		return true;
@@ -107,14 +114,34 @@ public class Escaping extends State
 		
 	}
 	
-	
-	private void evade() {
-		double absoluteBearing = Math.toRadians(m_robot.getHeading() + m_info.m_enemyBearing);
+	private double getDistanceToPoint(double x, double y) 
+	{
+		x = x - m_robot.getX();
+		y = y - m_robot.getY();
 
-		double evadeAngle = Math.toDegrees(absoluteBearing + Math.toRadians(90));  
-		m_robot.setTurnRight(Utils.normalRelativeAngle(evadeAngle - m_robot.getHeading()));
+		return Math.hypot(x, y);
+	}
+	 
+	private void evade(double x, double y) {
+		x = x - m_robot.getX();
+		y = y - m_robot.getY();
+		
+		m_robot.setTurnRightRadians(getAngleToPoint(x,y) + Math.PI/2);
+		
+		m_robot.setAhead(Math.cos(getAngleToPoint(x,y) + Math.PI/2) * 
+			getDistanceToPoint(m_info.m_enemyX,m_info.m_enemyY));
+	}
 
-		m_robot.ahead(100 + Math.random() * 50);  
+	@Override
+	public void onHitWall(HitWallEvent event) {
+		m_robot.stop();
+		m_robot.back(50);
+	}
+
+	@Override
+	public void onHitRobot(HitRobotEvent event) {
+		m_robot.stop();
+		m_robot.back(100);
 	}
 
 }

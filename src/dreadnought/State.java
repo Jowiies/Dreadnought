@@ -1,5 +1,7 @@
 package dreadnought;
 
+import robocode.HitRobotEvent;
+import robocode.HitWallEvent;
 import robocode.ScannedRobotEvent;
 
 abstract class State
@@ -19,4 +21,6 @@ abstract class State
 	
 	abstract void turn();
 	public abstract void onScannedRobot(ScannedRobotEvent e);
+	public abstract void onHitWall(HitWallEvent event);
+	public abstract void onHitRobot(HitRobotEvent event);
 }

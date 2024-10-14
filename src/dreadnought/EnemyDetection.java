@@ -2,6 +2,8 @@ package dreadnought;
 
 import static java.lang.Math.pow;
 import static java.lang.System.out;
+import robocode.HitRobotEvent;
+import robocode.HitWallEvent;
 import robocode.ScannedRobotEvent;
 
 
@@ -84,5 +86,15 @@ public class EnemyDetection extends State{
 		private double distance(double x1, double y1, double x2, double y2) 
 	{
 		return Math.sqrt(pow((x2 - x1),2) + pow((y2 - y1),2));
+	}
+
+	@Override
+	public void onHitWall(HitWallEvent event) {
+		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+	}
+
+	@Override
+	public void onHitRobot(HitRobotEvent event) {
+		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
 	}
 }
