@@ -36,12 +36,12 @@ public class Dreadnought extends AdvancedRobot
 	
 	@Override
 	public void onHitWall(HitWallEvent event) {
-		
+		state.onHitWall(event);
 	}
 	
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
-		
+		state.onHitRobot(event);
 	}
 	
 	private void setState(State state)

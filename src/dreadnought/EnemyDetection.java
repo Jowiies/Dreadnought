@@ -90,11 +90,11 @@ public class EnemyDetection extends State{
 
 	@Override
 	public void onHitWall(HitWallEvent event) {
-		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+	
 	}
 
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
-		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+		
 	}
 }
