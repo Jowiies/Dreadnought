@@ -31,13 +31,13 @@ public class Escaping extends State
 					m_info.m_fi = true;
 				}
 			}
-			//case 1 -> Evading the enemy if necessary ...
 			
+            //case 1 -> Evading the enemy if necessary ...			
 			case 1 -> {
 				if (m_info.m_enemyDistance < 200) {  // Only evade if the enemy is close
-					getEnemyCoords();
-					oscillate();
-					evade();
+					//getEnemyCoords();
+					//oscillate();
+					//evade();
 				} else {
 					m_info.m_inerState = 0;  // Return to original behavior when the enemy is far enough
 				}
@@ -54,7 +54,7 @@ public class Escaping extends State
 		m_info.m_inerState = 1;
 	}
 
-		// Method to calculate the angle from your robot to a given point (x, y)
+	// Method to calculate the angle from your robot to a given point (x, y)
 	private double getAngleToPoint(double x, double y) 
 	{
 		return Math.toDegrees(Math.atan2(x - m_robot.getX(), y - m_robot.getY()));
