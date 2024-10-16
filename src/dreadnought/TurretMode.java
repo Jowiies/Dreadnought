@@ -2,11 +2,10 @@ package dreadnought;
 
 import static java.lang.System.out;
 
-import org.jcp.xml.dsig.internal.dom.Utils;
-
 import robocode.HitRobotEvent;
 import robocode.HitWallEvent;
 import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
 
 public class TurretMode extends State{
 
