@@ -101,7 +101,6 @@ public class Escaping extends State
 
 	}
 
-
 	private double getAngleToPoint(double x, double y) 
 	{
 		x = x - m_robot.getX();
