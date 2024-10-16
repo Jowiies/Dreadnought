@@ -28,6 +28,7 @@ public class Escaping extends State
 		
 		switch(m_info.m_inerState) {
 			
+			//case 0 -> Pointint to the corner ...
 			case 0 -> {
 				readyToScan = false;
 				if (turnToPoint(m_info.m_coordX, m_info.m_coordY)) {
@@ -37,7 +38,7 @@ public class Escaping extends State
 				}
 			}
 			
-			//case 0 -> Heading to the corner ...
+			//case 1 -> Moving to the corner ...
 			case 1 -> {
 				oscillate();
 				
@@ -47,35 +48,21 @@ public class Escaping extends State
 					m_info.m_fi = true;
 				}
 			}
-			//case 1 -> Evading the enemy if necessary ...
+			//case 2 -> Evading the enemy ...
 			
 			case 2 ->  {
 				readyToScan = false;
-				m_robot.stop();
+				
 				m_robot.setAdjustRadarForRobotTurn(false);
 				m_robot.setAdjustRadarForGunTurn(false);
 				
+				m_robot.fire(Rules.MAX_BULLET_POWER/2);
 				
-				m_robot.fire(Rules.MIN_BULLET_POWER);
-				
-				double turnAngle = (getDistanceToPoint(m_info.m_enemyX, m_info.m_enemyY) >=100)  ? 45 : 90;
-				//double enemyAngle = Utils.normalRelativeAngle(
-				//	m_robot.getHeading() + m_info.m_enemyBearing
-				//);
-				//Utils.normalRelativeAngle(enemyAngle - m_robot.getHeading())
-				if (getAngleToPoint(m_info.m_enemyX, m_info.m_enemyY) > 0) {
-					out.println("turning right...");
-					m_robot.turnRight(turnAngle);
-				}
-				else {
-					out.println("turning left...");
-					m_robot.turnLeft(-turnAngle);
-				}
-				//out.println("EnemyAngle-> " + Math.toDegrees(angleToEnemy));
-				//out.println("CornerAngle-> " + Math.toDegrees(angleToCorner));
+				evade();
 				
 				readyToScan = true;
-				if (getDistanceToPoint(m_info.m_enemyX, m_info.m_enemyY) < 5) {
+				
+				if (m_info.m_enemyDistance < 5) {
 					m_robot.back(100);
 				}
 				else {
@@ -97,16 +84,20 @@ public class Escaping extends State
 		if (!readyToScan)
 			return;
 		
-		m_info.m_enemyBearing = m_robot.getHeading() + e.getBearing();
+		m_info.m_enemyBearing = e.getBearing();
 		m_info.m_enemyDistance = e.getDistance();
 		getEnemyCoords();	
 		
-		if (getDistanceToPoint(m_info.m_enemyX, m_info.m_enemyY) > 200)
+		if (m_info.m_enemyDistance > 200)
 			return;
 		
 		if (m_info.m_inerState == 1 ) {
+			m_robot.stop();
 			m_info.m_inerState = 2;
 		}
+		
+		if(m_info.m_inerState == 2 && m_info.m_enemyDistance < 100)
+			m_robot.stop();
 
 	}
 
@@ -120,6 +111,7 @@ public class Escaping extends State
 			Math.atan2(x,y) - m_robot.getHeadingRadians()
 		);
 	}
+	
 	
 	private void getEnemyCoords() {
 		double absoluteBearing = Math.toRadians(m_robot.getHeading() + m_info.m_enemyBearing);
@@ -161,6 +153,32 @@ public class Escaping extends State
 		return true;
 	}
 	
+	
+	private void evade() 
+	{
+		double turnAngle;
+
+		if (m_info.m_enemyDistance >= 150) {
+			turnAngle = 30;
+		} else if (m_info.m_enemyDistance >= 125) {
+			turnAngle = 45;
+		} else if (m_info.m_enemyDistance >= 100) {
+			turnAngle = 60;
+		} else {
+			turnAngle = 90;
+		}
+
+		out.println("Robot heading: " + m_robot.getHeading());
+		out.println("Enemy bearing: " + m_info.m_enemyBearing);
+
+		if (m_info.m_enemyBearing < 0) {
+			m_robot.turnRight(turnAngle);
+		} else {
+			m_robot.turnLeft(turnAngle);
+		}
+	}
+	
+	
 	private void oscillate()
 	{
 		double radarAngle = m_robot.getHeadingRadians() - 
@@ -168,7 +186,7 @@ public class Escaping extends State
 		
 		m_robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
 		
-		double oscillation = Math.toRadians(15);
+		double oscillation = Math.toRadians(10);
 		
 		if (Math.abs(radarAngle) < 0.01) {
 			if (turnRadarRight) {
@@ -200,13 +218,8 @@ public class Escaping extends State
 	@Override
 	public void onHitRobot(HitRobotEvent event) 
 	{
-		if (m_robot.getVelocity() > 0) {
-			m_robot.back(100);
-		}
-		else {
-			m_robot.ahead(100);
-		}
-		//m_robot.setTurnLeft(Math.toRadians(45));
+		m_robot.back(50);
+		m_info.m_inerState = 2;
 	}
 
 }
