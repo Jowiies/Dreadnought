@@ -15,22 +15,24 @@ public class TurretMode extends State{
 	void turn() {
 		m_robot.setAdjustRadarForRobotTurn(true);
 		m_robot.setAdjustRadarForGunTurn(true);
+                
+                if (m_robot.getTime() - m_info.m_enemyLastSeenTime > 20) {
+                    m_info.m_inerState = 0;  // Cambiar al estado de búsqueda
+                }
 
 		switch(m_info.m_inerState) {
 			//case 0 -> Searching for the enemy ...
 			case 0 -> {
-				m_robot.setTurnRadarRight(10);
-                                m_robot.setTurnGunRight(10);
+				m_robot.setTurnRadarRight(25);
+                                m_robot.setTurnGunRight(25);
 			}
 			
 			//case 1 -> Enemy found, fire !!!	
 			case 1 -> {
-                            // Calcular el ángulo para el radar (corregido con la función de normalización)
                             double radarTurn = m_robot.getHeading() - m_robot.getRadarHeading() + m_info.m_enemyBearing;
                             radarTurn = Utils.normalRelativeAngleDegrees(radarTurn);
                             m_robot.setTurnRadarRight(radarTurn);
 
-                            // Calcular el ángulo para el cañón (corregido con la función de normalización)
                             double gunTurn = m_robot.getHeading() - m_robot.getGunHeading() + m_info.m_enemyBearing;
                             gunTurn = Utils.normalRelativeAngleDegrees(gunTurn);
                             m_robot.setTurnGunRight(gunTurn);
@@ -49,6 +51,8 @@ public class TurretMode extends State{
 		
 		m_info.m_enemyBearing = e.getBearing();
 		m_info.m_enemyDistance = e.getDistance();
+                
+                m_info.m_enemyLastSeenTime = m_robot.getTime(); 
 		
 		m_info.m_inerState = 1;
 	}
