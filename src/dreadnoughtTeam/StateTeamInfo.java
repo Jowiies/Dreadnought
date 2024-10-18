@@ -1,13 +1,25 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package dreadnoughtTeam;
 
-/**
- *
- * @author matebook
- */
-public class StateTeamInfo {
+
+public class StateTeamInfo 
+{
+	
+	byte id;
+	
+	byte innerState;
+	
+	boolean fi;
+	
+	boolean clockWise;
+	
+	boolean isLeader;
+	
+	double enemyDistance, enemyBearing;
+	
+	double followCoordX, followCoordY;
+	
+	String myLeader;
+	
 	
 }
