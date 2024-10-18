@@ -14,6 +14,7 @@ public class StateInfo
 		this.m_enemyBearing = -1;
 		this.m_enemyX = -1;
 		this.m_enemyY = -1;
+                this.m_enemyLastSeenTime = 0;
 	}
 	
 	byte m_id;
@@ -30,4 +31,6 @@ public class StateInfo
 	double m_enemyBearing;
 	
 	double m_enemyX, m_enemyY;
+        
+        long m_enemyLastSeenTime = 0;
 }
