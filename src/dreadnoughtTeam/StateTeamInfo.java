@@ -9,7 +9,7 @@ public class StateTeamInfo
 	
 	byte innerState;
 	
-	byte leaderId, myLeaderId;
+	byte leaderId, following, followed;
 	
 	boolean fi;
 	
