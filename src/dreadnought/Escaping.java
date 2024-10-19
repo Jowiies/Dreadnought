@@ -115,7 +115,8 @@ public class Escaping extends State
 	}
 	
 	
-	private void getEnemyCoords() {
+	private void getEnemyCoords() 
+	{
 		double absoluteBearing = Math.toRadians(m_robot.getHeading() + m_info.m_enemyBearing);
 
 		m_info.m_enemyX = m_robot.getX() + m_info.m_enemyDistance * Math.sin(absoluteBearing);

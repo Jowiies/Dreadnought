@@ -9,6 +9,8 @@ public class StateTeamInfo
 	
 	byte innerState;
 	
+	byte leaderId, myLeaderId;
+	
 	boolean fi;
 	
 	boolean clockWise;
@@ -19,7 +21,8 @@ public class StateTeamInfo
 	
 	double followCoordX, followCoordY;
 	
-	String myLeader;
+	Object msgObj;
+	String msgSender;
 	
 	
 }

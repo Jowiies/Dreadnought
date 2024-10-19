@@ -13,7 +13,9 @@ public class Dreadnoughts extends TeamRobot
 	@Override
 	public void run() 
 	{
-		if (state == null) { /*TODO*/}
+		if (state == null) {
+			state = new HandShake(new StateTeamInfo(), this);
+		}
 		while (true) {
 			state.turn();
 			this.execute();
