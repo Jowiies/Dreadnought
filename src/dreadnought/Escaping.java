@@ -25,7 +25,8 @@ public class Escaping extends State
 	{
 		m_robot.setAdjustRadarForRobotTurn(true);
 		m_robot.setAdjustRadarForGunTurn(true);
-		
+		m_robot.setAdjustGunForRobotTurn(false);
+
 		switch(m_info.m_inerState) {
 			
 			//case 0 -> Pointint to the corner ...
@@ -53,9 +54,11 @@ public class Escaping extends State
 			case 2 ->  {
 				readyToScan = false;
 				
-				m_robot.setAdjustRadarForRobotTurn(false);
-				m_robot.setAdjustRadarForGunTurn(false);
-				
+				m_robot.setAdjustRadarForRobotTurn(false);		
+				m_robot.setAdjustGunForRobotTurn(true);
+
+				double gunAngle = m_robot.getHeading() + m_info.m_enemyBearing - m_robot.getGunHeading()  ;
+				m_robot.turnGunRight(Utils.normalRelativeAngleDegrees(gunAngle));
 				m_robot.fire(Rules.MAX_BULLET_POWER/2);
 				
 				evade();
@@ -66,7 +69,7 @@ public class Escaping extends State
 					m_robot.back(100);
 				}
 				else {
-					m_robot.ahead(100);
+					m_robot.ahead(50);
 				}
 				
 				m_info.m_inerState = 0;
@@ -96,7 +99,7 @@ public class Escaping extends State
 			m_info.m_inerState = 2;
 		}
 		
-		if(m_info.m_inerState == 2 && m_info.m_enemyDistance < 100)
+		if(m_info.m_inerState == 2 && m_info.m_enemyDistance <= 200)
 			m_robot.stop();
 
 	}
@@ -121,7 +124,6 @@ public class Escaping extends State
 	
 	private boolean turnToPoint(double x, double y)
 	{
-		//adapted code from https://robowiki.net/wiki/GoTo
 		
 		
 		double radarAngle = m_robot.getHeadingRadians() - 
@@ -140,7 +142,6 @@ public class Escaping extends State
 	
 	private boolean goTo(double x, double y) 
 	{
-		//adapted code from https://robowiki.net/wiki/GoTo
 		
 		double distance = getDistanceToPoint(x,y);
 		
@@ -175,6 +176,7 @@ public class Escaping extends State
 		} else {
 			m_robot.turnLeft(turnAngle);
 		}
+		
 	}
 	
 	
@@ -185,7 +187,7 @@ public class Escaping extends State
 		
 		m_robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
 		
-		double oscillation = Math.toRadians(10);
+		double oscillation = Math.toRadians(13);
 		
 		if (Math.abs(radarAngle) < 0.01) {
 			if (turnRadarRight) {
@@ -210,8 +212,7 @@ public class Escaping extends State
 	@Override
 	public void onHitWall(HitWallEvent event) 
 	{
-		//m_robot.back(50);
-		//m_robot.setTurnLeft(Math.toRadians(45));
+
 	}
 
 	@Override
