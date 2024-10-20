@@ -3,12 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/matebook/java/PROP/Dreadnought/src/dreadnought/Escaping.java</file>
-            <file>file:/home/matebook/java/PROP/Dreadnought/src/dreadnought/Dreadnought.java</file>
-            <file>file:/home/matebook/java/PROP/Dreadnought/src/dreadnought/EnemyDetection.java</file>
-            <file>file:/home/matebook/java/PROP/Dreadnought/src/dreadnought/TurretMode.java</file>
-            <file>file:/home/matebook/java/PROP/Dreadnought/src/dreadnought/State.java</file>
-            <file>file:/home/matebook/java/PROP/Dreadnought/src/dreadnought/StateInfo.java</file>
+            <file>file:/home/zitro/Escritorio/PROP/Dreadnought/src/dreadnoughtTeam/Following.java</file>
+            <file>file:/home/zitro/Escritorio/PROP/Dreadnought/src/dreadnoughtTeam/StateTeam.java</file>
+            <file>file:/home/zitro/Escritorio/PROP/Dreadnought/src/dreadnoughtTeam/StateTeamInfo.java</file>
+            <file>file:/home/zitro/Escritorio/PROP/Dreadnought/src/dreadnoughtTeam/HandShake.java</file>
         </group>
     </open-files>
 </project-private>
