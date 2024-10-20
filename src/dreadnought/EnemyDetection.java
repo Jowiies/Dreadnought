@@ -55,7 +55,9 @@ public class EnemyDetection extends State{
 		
 		m_info.m_inerState = 1;
 	}
-
+	
+	// Pre: true
+	// Post: returns an array[2] with the furthest corner coords(x,y).
 	private double[] getFurthesCorner(double enemicX, double enemicY) 
 	{
 		double width = m_robot.getBattleFieldWidth() - MARGIN;

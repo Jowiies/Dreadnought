@@ -53,9 +53,6 @@ public class Dreadnought extends AdvancedRobot
 			case 1 ->{
 				this.state = new TurretMode(this, this.state.m_info);
 			}
-			
-			default -> {
-			}
 		}
 	}	
     

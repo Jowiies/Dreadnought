@@ -48,18 +48,20 @@ public class HandShake extends StateTeam
 	public void turn() 
 	{
 		switch (stateInfo.innerState) {
-			case 0 ->
+			case 0 -> {
 				leaderSelection();
+			}
 			case 1 -> {
 				messageReader();
 				stateInfo.innerState++;
 			}
-			case 2 ->
-				handleResultsOrStop();
+			case 2 -> {
+				checkResults();
+			}
 		}
 	}
 
-	private void handleResultsOrStop() 
+	private void checkResults() 
 	{
 		if (stateInfo.isLeader && counter == 4) {
 			sendResults();
@@ -114,7 +116,7 @@ public class HandShake extends StateTeam
 			readTheLeaderIs(msg);
 		} 
 		else if (msg.startsWith("My position is:")) {
-			readMyPosition(msg);
+			readMyPositionIs(msg);
 		} 
 		else if (msg.startsWith("Following/Followed :")) {
 			readFollowingFollowed(msg);
@@ -124,7 +126,7 @@ public class HandShake extends StateTeam
 		}
 	}
 
-	private void readMyPosition(String msg) {
+	private void readMyPositionIs(String msg) {
 		String coordinatesPart = msg.substring(msg.indexOf("(") + 1, msg.indexOf(")"));
 		String[] coordinates = coordinatesPart.split(", ");
 
