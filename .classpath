@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+        <classpathentry kind="lib" path="/home/jowiees/robocode/libs/robocode.jar"/>
+  <!-- Add other Robocode JARs as needed -->
+</classpath>
+

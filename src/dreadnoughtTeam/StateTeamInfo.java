@@ -19,11 +19,9 @@ public class StateTeamInfo
 	
 	double enemyDistance, enemyBearing;
 	
+	double enemyX, enemyY;
+	
 	double followCoordX, followCoordY;
-        
-        double leaderCoordX, leaderCoordY;
-        
-        double leaderGoCoordX, leaderGoCoordY;
 	
 	Object msgObj;
 	String msgSender;

@@ -125,8 +125,6 @@ public class Escaping extends State
 	
 	private boolean turnToPoint(double x, double y)
 	{
-		
-		
 		double radarAngle = m_robot.getHeadingRadians() - 
 			m_robot.getRadarHeadingRadians();
 		
@@ -169,15 +167,11 @@ public class Escaping extends State
 			turnAngle = 90;
 		}
 
-		out.println("Robot heading: " + m_robot.getHeading());
-		out.println("Enemy bearing: " + m_info.m_enemyBearing);
-
 		if (m_info.m_enemyBearing < 0) {
 			m_robot.turnRight(turnAngle);
 		} else {
 			m_robot.turnLeft(turnAngle);
-		}
-		
+		}	
 	}
 	
 	

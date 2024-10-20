@@ -96,7 +96,7 @@ public class HandShake extends StateTeam
 				robot.broadcastMessage("The leader is :" + leader);
 				out.println("The leader is :" + leader);
 				amITheLeader(leader);
-                                stateInfo.leaderId = leader;
+                                stateInfo.leaderId = (byte)leader;
 				isChosen = true;
 			} catch (IOException ex) {
 				Logger.getLogger(HandShake.class.getName()).log(Level.SEVERE, null, ex);
@@ -143,7 +143,8 @@ public class HandShake extends StateTeam
 		}
 	}
 
-	private void readFollowingFollowed(String msg) {
+	private void readFollowingFollowed(String msg) 
+        {
 		String[] idxs = msg.split(":")[1].trim().split("/");
 		out.println(idxs[0] + "/" +  idxs[1]);
 		stateInfo.following = (byte) Integer.parseInt(idxs[0]);
@@ -151,7 +152,8 @@ public class HandShake extends StateTeam
 		stateInfo.followed = (stateInfo.followed == getIdFromName(robot.getName())) ? -1 : stateInfo.followed;
 	}
 	
-	private void readTheLeaderIs(String msg) {
+	private void readTheLeaderIs(String msg) 
+        {
 		int idx = Integer.parseInt(msg.split(":")[1].trim());
 		amITheLeader(idx);
 		stateInfo.leaderId = (byte) idx;
