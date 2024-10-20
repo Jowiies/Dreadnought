@@ -1,6 +1,11 @@
 
 package dreadnoughtTeam;
 
+import dreadnoughtTeam.Leading;
+import dreadnoughtTeam.StateTeam;
+import dreadnoughtTeam.StateTeamInfo;
+import dreadnoughtTeam.Following;
+import dreadnoughtTeam.HandShake;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
@@ -46,7 +51,4 @@ public class Dreadnoughts extends TeamRobot
 			new Leading(state.stateInfo,this) 
 			: new Following(state.stateInfo,this);
 	}
-	
-	
-	
 }

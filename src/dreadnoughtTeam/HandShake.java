@@ -96,6 +96,7 @@ public class HandShake extends StateTeam
 				robot.broadcastMessage("The leader is :" + leader);
 				out.println("The leader is :" + leader);
 				amITheLeader(leader);
+                                stateInfo.leaderId = leader;
 				isChosen = true;
 			} catch (IOException ex) {
 				Logger.getLogger(HandShake.class.getName()).log(Level.SEVERE, null, ex);
@@ -105,9 +106,8 @@ public class HandShake extends StateTeam
 
 	private void messageReader() 
 	{
-		if (!(stateInfo.msgObj instanceof String)) {
+		if (!(stateInfo.msgObj instanceof String)) 
 			return;
-		}
 
 		String msg = (String) stateInfo.msgObj;
 		out.println("message: " + msg + " RECEIVED");
