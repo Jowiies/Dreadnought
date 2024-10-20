@@ -4,61 +4,64 @@ package dreadnoughtTeam;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
 import java.awt.geom.Point2D;
+import java.io.IOException;
+import static java.lang.Math.pow;
 import static java.lang.System.out;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import robocode.util.Utils;
 
 public class Leading extends StateTeam {
     
-    double corners[][];
-    
-    private int currentCornerIndex;
+    //double corners[][];
+    private static final double MARGIN = 25;
 
     public Leading(StateTeamInfo stateInfo, Dreadnoughts robot) {
         super(stateInfo, robot);
-        
-        //Inicialización de las esquinas del rectángulo
-        this.corners = new double[][] {
-            {robot.getBattleFieldWidth() * 0.1, robot.getBattleFieldHeight() * 0.1}, 
-            {robot.getBattleFieldWidth() * 0.9, robot.getBattleFieldHeight() * 0.1}, 
-            {robot.getBattleFieldWidth() * 0.1, robot.getBattleFieldHeight() * 0.9}, 
-            {robot.getBattleFieldWidth() * 0.9, robot.getBattleFieldHeight() * 0.9}
-        };
-        
-        this.currentCornerIndex = 0;  //Índice de la esquina inicial
     }
 
     @Override
     public void turn() {
         switch (stateInfo.innerState) {
-            case 0 -> {  //Calcular la esquina más cercana y comenzar el movimiento
-                currentCornerIndex = findClosestCorner();
-                stateInfo.innerState = 1;
-            }
-
-            case 1 -> {  //Moverse hacia la esquina más cercana
-                double targetX = corners[currentCornerIndex][0];
-                double targetY = corners[currentCornerIndex][1];
+            case 0 -> {  //Leader found, calculating corner and direction.
+                double absBearing = Math.toRadians(robot.getHeading() + stateInfo.enemyBearing);
                 
-                if (goTo(targetX, targetY)) {
-                    out.println("Llegado a la esquina " + currentCornerIndex);
-                    broadcastPosition();  //Enviar la posición a los seguidores
-                    stateInfo.innerState = 2;
-                }
-            }
+                   
+                int myIdx = Character.getNumericValue(robot.getName().charAt(robot.getName().length() - 2));
+			
+		if (stateInfo.leaderId == myIdx) {
+			this.stateInfo.isLeader = true;
 
-            case 2 -> {  //Prepararse para ir a la siguiente esquina
-                currentCornerIndex = (currentCornerIndex + 1) % corners.length;  //Sentido horario
-                stateInfo.innerState = 3; 
-            }
+                        stateInfo.leaderCoordX = robot.getX() + Math.sin(absBearing) * stateInfo.enemyDistance;
+                        stateInfo.leaderCoordY = robot.getY() + Math.cos(absBearing) * stateInfo.enemyDistance;
 
-            case 3 -> {  //Moverse hacia la siguiente esquina
-                double targetX = corners[currentCornerIndex][0];
-                double targetY = corners[currentCornerIndex][1];
+                        double[] corner = getNearCorner(stateInfo.leaderCoordX, stateInfo.leaderCoordY);
+                        stateInfo.leaderGoCoordX = (int)corner[0];
+                        stateInfo.leaderGoCoordY = (int)corner[1];
+
+                        out.println("Corner coords -> " + stateInfo.leaderGoCoordX + ", " + stateInfo.leaderGoCoordY);
+                        stateInfo.innerState = 1;
+		} 
+		else {
+                    this.stateInfo.isLeader = false;
+                    stateInfo.innerState = 0;
+		}
                 
-                if (goTo(targetX, targetY)) {  //Si alcanzamos la esquina
-                    out.println("Llegado a la esquina " + currentCornerIndex);
-                    broadcastPosition();  //Enviar la posición a los seguidores
-                    stateInfo.innerState = 2;
-                }
+            }
+            
+            case 1 -> { //Apuntamos a la primera esquina
+                turnToPoint(stateInfo.leaderGoCoordX, stateInfo.leaderGoCoordY);
+                stateInfo.innerState = 2;
+            }
+            
+            case 2 -> { //vamos a la primera esquina
+                goTo(stateInfo.leaderGoCoordX, stateInfo.leaderGoCoordY);
+                stateInfo.innerState = 3;
+
+            }
+
+            case 3 -> {  //Prepararse para ir a la siguiente esquina
+
             }
         }
     }
@@ -73,41 +76,76 @@ public class Leading extends StateTeam {
         // ...
     }
 
-    //Método que mueve el robot hacia una posición (x, y) específica
-    private boolean goTo(double x, double y) {
-        double distance = getDistanceToPoint(x, y);
-        double angle = getAngleToPoint(x, y);
-        
-        robot.turnRight(angle);
-        robot.setAhead(distance);
-        robot.execute();
+    private boolean goTo(double x, double y) 
+    {
 
-        //Si el robot está cerca de la esquina, consideramos que ha llegado
-        return (distance < 25);
+            double distance = getDistanceToPoint(x,y);
+
+            if (Math.abs(distance) > 0.01) {
+                    robot.setAhead(distance);
+                    return false;
+
+            }
+            return true;
     }
 
-    //Encuentra la esquina más cercana al robot al inicio
-    private int findClosestCorner() {
-        double minDistance = Double.MAX_VALUE;
-        int closestIndex = 0;
 
-        for (int i = 0; i < corners.length; i++) {
-            double distance = getDistanceToPoint(corners[i][0], corners[i][1]);
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestIndex = i;
+    private double getDistanceToPoint(double x, double y) 
+    {
+            x = x - robot.getX();
+            y = y - robot.getY();
+
+            return Math.hypot(x, y);
+    }
+
+    private boolean turnToPoint(double x, double y)
+    {
+
+
+            double radarAngle = robot.getHeadingRadians() - 
+                    robot.getRadarHeadingRadians();
+
+
+            if (Math.abs(getAngleToPoint(x,y)) > 0.1 || Math.abs(radarAngle) > 0.1) {
+                    robot.setTurnRightRadians(getAngleToPoint(x,y));
+                    robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
+                    return false;
+            }
+            return true;
+    }
+
+    private double[] getNearCorner(double leaderX, double leaderY) {
+        double width = robot.getBattleFieldWidth();
+        double height = robot.getBattleFieldHeight();
+
+        double[][] cantonades = {
+            {(width*0.1)-MARGIN, (height*0.1)-MARGIN},
+            {(width*0.9)-MARGIN, (height*0.1)-MARGIN},
+            {(width*0.1)-MARGIN, (height*0.9)-MARGIN},
+            {(width*0.9)-MARGIN, (height*0.9)-MARGIN}
+        };
+
+        double[] mostProperaCantonada = cantonades[0];
+        double minDistancia = distance(leaderX, leaderY, cantonades[0][0], cantonades[0][1]);
+
+        for (double[] cantonada : cantonades) {
+            double dist = distance(leaderX, leaderY, cantonada[0], cantonada[1]);
+
+            if (dist < minDistancia) {
+                minDistancia = dist;
+                mostProperaCantonada = cantonada;
             }
         }
 
-        return closestIndex;
+        return mostProperaCantonada;
     }
 
-    //Calcula la distancia entre el robot y el punto (x, y)
-    private double getDistanceToPoint(double x, double y) {
-        x = x - robot.getX();
-        y = y - robot.getY();
-        return Math.hypot(x, y);
+    
+    private double distance(double x1, double y1, double x2, double y2) 
+    {
+        return Math.sqrt(pow((x2 - x1),2) + pow((y2 - y1),2));
     }
+
 
     //Calcula el ángulo que el robot debe girar para apuntar al punto (x, y)
     private double getAngleToPoint(double x, double y) {

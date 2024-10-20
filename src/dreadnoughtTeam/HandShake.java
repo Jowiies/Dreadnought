@@ -37,7 +37,7 @@ public class HandShake extends StateTeam
 			}
 			
 			case 2 -> {
-				
+                            stateInfo.fi = true;
 			}
 		}
 		
@@ -63,6 +63,7 @@ public class HandShake extends StateTeam
 				robot.broadcastMessage("The leader is :" + leader);
 				out.println("The leader is :" + leader);
 				amITheLeader(leader);
+                                stateInfo.leaderId = leader;
 				isChosen = true;
 			} 
 			catch (IOException ex) {
@@ -82,7 +83,7 @@ public class HandShake extends StateTeam
 		if (msg.startsWith("The leader is :")) {
 			int idx = Integer.parseInt(msg.split(":")[1].trim());
 			amITheLeader(idx);
-			stateInfo.leaderId = (byte)idx;
+			//stateInfo.leaderId = (byte)idx;
 		}
 		else if (msg.startsWith("My position is:")) {
 			String coordinatesPart = msg.substring(msg.indexOf("(") + 1, msg.indexOf(")"));

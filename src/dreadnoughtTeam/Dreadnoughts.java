@@ -49,11 +49,8 @@ public class Dreadnoughts extends TeamRobot
 		switch(state.stateInfo.id) {
 			case 0 -> {
 				this.state = new Leading(this.state.stateInfo, this);
+                                //this.state = new Following(this.state.stateInfo, this);
 			}
-			case 1 ->{
-				this.state = new Following(this.state.stateInfo, this);
-			}
-			
 			default -> {
 			}
 		}
