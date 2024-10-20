@@ -67,10 +67,10 @@ public class HandShake extends StateTeam
 			sendResults();
 			robot.stop();
 			stateInfo.fi = true;
-		} else if (!stateInfo.isLeader && stateInfo.following != -1) {
-			robot.stop();
-			stateInfo.fi = true;
 		}
+		else if (!stateInfo.isLeader)
+			stateInfo.fi = stateInfo.following != -1;
+		out.println(stateInfo.following);
 	}
 
 	@Override
@@ -118,12 +118,9 @@ public class HandShake extends StateTeam
 		else if (msg.startsWith("My position is:")) {
 			readMyPositionIs(msg);
 		} 
-		else if (msg.startsWith("Following/Followed :")) {
+		else if (msg.startsWith("Following/Followed:")) {
 			readFollowingFollowed(msg);
 		} 
-		else if (msg.startsWith("STOP")) {
-			stateInfo.innerState = 2;
-		}
 	}
 
 	private void readMyPositionIs(String msg) {
@@ -148,6 +145,7 @@ public class HandShake extends StateTeam
 
 	private void readFollowingFollowed(String msg) {
 		String[] idxs = msg.split(":")[1].trim().split("/");
+		out.println(idxs[0] + "/" +  idxs[1]);
 		stateInfo.following = (byte) Integer.parseInt(idxs[0]);
 		stateInfo.followed = (byte) Integer.parseInt(idxs[1]);
 		stateInfo.followed = (stateInfo.followed == getIdFromName(robot.getName())) ? -1 : stateInfo.followed;

@@ -13,10 +13,14 @@ public class Dreadnoughts extends TeamRobot
 	@Override
 	public void run() 
 	{
-		if (state == null) {
+		out.println(this.getName());
+		
+		if (state == null) 
 			state = new HandShake(new StateTeamInfo(), this);
-		}
+	
 		while (true) {
+			if (state.stateInfo.fi)
+				setState();
 			state.turn();
 			this.execute();
 		}
@@ -34,6 +38,13 @@ public class Dreadnoughts extends TeamRobot
 	public void onMessageReceived(MessageEvent msg) 
 	{
 		state.onMessageReceived(msg);
+	}
+	
+	private void setState()
+	{
+		state = (state.stateInfo.isLeader) ? 
+			new Leading(state.stateInfo,this) 
+			: new Following(state.stateInfo,this);
 	}
 	
 	

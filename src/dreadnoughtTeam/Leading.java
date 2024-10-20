@@ -1,6 +1,10 @@
 
 package dreadnoughtTeam;
 
+import java.io.IOException;
+import static java.lang.System.out;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
 
@@ -9,8 +13,7 @@ import robocode.ScannedRobotEvent;
 public class Leading extends StateTeam
 {
 
-	double corners[][];
-	
+	final double corners[][];
 
 	public Leading(StateTeamInfo stateInfo, Dreadnoughts robot) {
 		super(stateInfo,robot);
@@ -27,7 +30,8 @@ public class Leading extends StateTeam
 	@Override
 	public void turn() 
 	{
-		/*TODO*/	
+		sendPosition();
+		out.println("Im the leader, so i'm standing doing nothing");	
 	}
 
 	@Override
@@ -40,6 +44,23 @@ public class Leading extends StateTeam
 	public void onMessageReceived(MessageEvent msg) 
 	{
 		/*TODO*/
+	}
+	
+	private void sendPosition()
+	{
+		out.println("sending current position...");
+		if (stateInfo.followed == -1) {
+			return;
+		}
+
+		try {
+			robot.sendMessage(FIRST_NAME +" (" + stateInfo.followed + ")",
+				"My coords are: " + robot.getX() + "/" + robot.getY());
+			out.println(FIRST_NAME +" (" + stateInfo.followed + ") My coords are: " + robot.getX() + "/" + robot.getY());
+		} 
+		catch (IOException ex) {
+			Logger.getLogger(Following.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 	
 }

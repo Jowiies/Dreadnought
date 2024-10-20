@@ -13,11 +13,15 @@ abstract class StateTeam
 		this.stateInfo = stateInfo;
 		this.stateInfo.fi = false;
 		this.stateInfo.id = 0;
+		this.stateInfo.msgObj = null;
+		this.stateInfo.msgSender = null;
 		this.stateInfo.innerState = 0;
 		this.robot = robot;
 	}
 	protected StateTeamInfo stateInfo;
 	protected Dreadnoughts robot;
+	
+	protected final String FIRST_NAME = "dreadnoughtTeam.Dreadnoughts*";
 	
 	public abstract void turn();
 	
