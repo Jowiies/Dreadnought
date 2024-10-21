@@ -33,16 +33,16 @@ public class TurretMode extends State{
 			
 			//case 1 -> Enemy found, fire !!!	
 			case 1 -> {
-                    double radarTurn = m_robot.getHeading() - m_robot.getRadarHeading() + m_info.m_enemyBearing;
-                    radarTurn = Utils.normalRelativeAngleDegrees(radarTurn);
-                    m_robot.setTurnRadarRight(radarTurn);
+                            double radarTurn = m_robot.getHeading() - m_robot.getRadarHeading() + m_info.m_enemyBearing;
+                            radarTurn = Utils.normalRelativeAngleDegrees(radarTurn);
+                            m_robot.setTurnRadarRight(radarTurn);
 
-                    double gunTurn = m_robot.getHeading() - m_robot.getGunHeading() + m_info.m_enemyBearing;
-                    gunTurn = Utils.normalRelativeAngleDegrees(gunTurn);
-                    m_robot.setTurnGunRight(gunTurn);
-                    
-                    double firePower = Math.min(500 / m_info.m_enemyDistance, 3);
-                    m_robot.fire(firePower);
+                            double gunTurn = m_robot.getHeading() - m_robot.getGunHeading() + m_info.m_enemyBearing;
+                            gunTurn = Utils.normalRelativeAngleDegrees(gunTurn);
+                            m_robot.setTurnGunRight(gunTurn);
+
+                            double firePower = Math.min(500 / m_info.m_enemyDistance, 3);
+                            m_robot.fire(firePower);
 			}
 
 		}
