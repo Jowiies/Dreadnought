@@ -18,7 +18,8 @@ public class Leading extends StateTeam {
         final double corners[][];
 	private boolean turnRadarRight = true;
 	private boolean readyToScan = false;
-	byte counter;
+
+	byte cornerIdx;
 
         public Leading(StateTeamInfo stateInfo, Dreadnoughts robot) 
         {
@@ -28,12 +29,13 @@ public class Leading extends StateTeam {
 
                 corners = new double[][]{
                         {width*0.1, height*0.1},	//botom-left
-                        {width*0.9, height*0.1},	//botom-right
+                        {width*0.1, height*0.9},	//top-left
                         {width*0.9, height*0.9},	//top-rigth
-                        {width*0.1, height*0.9}		//top-left
+                        {width*0.9, height*0.1} 	//botom-right
                 };
 		
-		counter = 0;
+		cornerIdx = getNearCornerIdx();
+
         }
 
         @Override
@@ -49,7 +51,7 @@ public class Leading extends StateTeam {
 			//case 0 -> Pointint to the corner ...
 			case 0 -> {
 				readyToScan = false;
-				if (turnToPoint(corners[counter][0], corners[counter][1])) {
+				if (turnToPoint(corners[cornerIdx][0], corners[cornerIdx][1])) {
 					robot.stop();
 					stateInfo.innerState = 1;
 					readyToScan = true;
@@ -60,9 +62,9 @@ public class Leading extends StateTeam {
 			case 1 -> {
 				oscillate();
 				out.println("moving to the corner...");
-				if (goTo(corners[counter][0], corners[counter][1])) {
+				if (goTo(corners[cornerIdx][0], corners[cornerIdx][1])) {
 					robot.stop();
-					counter = (byte) (counter < 3 ? counter + 1 : 0);
+					cornerIdx = (byte) (cornerIdx < 3 ? cornerIdx + 1 : 0);
 					stateInfo.innerState = 0;
 				}
 			}
@@ -136,22 +138,21 @@ public class Leading extends StateTeam {
                 }
         }
 
-       // private double[] getNearCorner() {
+        private byte getNearCornerIdx() {
 
-       //         double[] mostProperaCantonada = corners[0];
-       //         double minDistancia = getDistanceToPoint(corners[0][0], corners[0][1]);
+                double minDistancia = getDistanceToPoint(corners[0][0], corners[0][1]);
+                byte counter = 0;
+                for (double[] corner : corners) {
+                        double dist = getDistanceToPoint(corner[0], corner[1]);
 
-       //         for (double[] corner : corners) {
-       //                 double dist = getDistanceToPoint(corner[0], corner[1]);
+                        if (dist < minDistancia) {
+                                minDistancia = dist;
+                                ++counter;
+                        }
+                }
 
-       //                 if (dist < minDistancia) {
-       //                         minDistancia = dist;
-       //                         mostProperaCantonada = corner;
-       //                 }
-       //         }
-
-       //         return mostProperaCantonada;
-       // }
+                return counter; 
+        }
 	
 	private double getDistanceToPoint(double x, double y) {
 		x = x - robot.getX();
@@ -202,15 +203,10 @@ public class Leading extends StateTeam {
 	private void evade() {
 		double turnAngle;
 
-		if (stateInfo.enemyDistance >= 150) {
-			turnAngle = 30;
-		} else if (stateInfo.enemyDistance >= 125) {
-			turnAngle = 45;
-		} else if (stateInfo.enemyDistance >= 100) {
-			turnAngle = 60;
-		} else {
-			turnAngle = 90;
-		}
+		if (stateInfo.enemyDistance >= 150)turnAngle = 30;
+                else if (stateInfo.enemyDistance >= 125) turnAngle = 45;
+                else if (stateInfo.enemyDistance >= 100) turnAngle = 60;
+                else turnAngle = 90;
 
 		if (stateInfo.enemyBearing < 0) {
 			robot.turnRight(turnAngle);

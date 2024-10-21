@@ -22,13 +22,16 @@ public class Following extends StateTeam {
         {
                 super(stateInfo, robot);
                 readyToRead = true;
-                readyToScan = false;
+                readyToScan = true;
                 turnRadarRight = true;
         }
 
         @Override
         public void turn() 
         {
+		if (robot.getEnergy() <= 0.1)
+			sendOnDeathMessage();
+		
                 sendPosition();
                 
                 oscillate();
@@ -104,9 +107,10 @@ public class Following extends StateTeam {
         @Override
         public void onMessageReceived(MessageEvent msg) 
         {
-                if (!readyToRead) 
+		
+                if (!readyToRead && !isOnDeathMessage(msg.getMessage())) 
                         return;
-
+		out.println(isOnDeathMessage(msg.getMessage()));
                 readyToRead = false;
 
                 stateInfo.msgObj = msg.getMessage();
@@ -230,11 +234,11 @@ public class Following extends StateTeam {
                         stateInfo.followCoordX = Double.parseDouble(coords[0]);
                         stateInfo.followCoordY = Double.parseDouble(coords[1]);
                 } 
-                else if (msg.startsWith("For now on you're being followed by:")) {
+                else if (msg.startsWith("Followed by:")) {
                         stateInfo.followed = (byte)Integer.parseInt(msg.split(":")[1].trim());
                 }
-                else if (msg.startsWith("For now on you follow:")) {
-                        stateInfo.followed = (byte)Integer.parseInt(msg.split(":")[1].trim());
+                else if (msg.startsWith("Follow:")) {
+                        stateInfo.following = (byte)Integer.parseInt(msg.split(":")[1].trim());
                 }
                 else if (msg.startsWith("For now on you are the leader")) {
                         //TODO
@@ -245,15 +249,15 @@ public class Following extends StateTeam {
        private void sendOnDeathMessage()
        {
                 try {
-                        robot.sendMessage(FIRST_NAME +" (" + stateInfo.followed + ")",
-                                        "For now on you're being followed by: " + stateInfo.followed);
-                        out.println(FIRST_NAME +" (" + stateInfo.followed + ") For now on you're being followed by: " + stateInfo.followed);
+                        robot.sendMessage(FIRST_NAME +" (" + stateInfo.following + ")",
+                                        "Followed by: " + stateInfo.followed);
+                        out.println(FIRST_NAME +" (" + stateInfo.following + ") For now on you're being followed by: " + stateInfo.followed);
                        
                         if (stateInfo.followed == -1)
                                 return;
 
                         robot.sendMessage(FIRST_NAME +" (" + stateInfo.followed + ")",
-                                        "For now on you follow: " + stateInfo.following);
+                                        "Follow: " + stateInfo.following);
                         out.println(FIRST_NAME +" (" + stateInfo.followed + ") For now on you follow: " + stateInfo.following);
                 } 
                 catch (IOException ex) {
@@ -261,6 +265,18 @@ public class Following extends StateTeam {
                 }
 
        };
+       
+        private boolean isOnDeathMessage(Object msgObj)
+	{
+                if (msgObj == null || !(msgObj instanceof String)) {
+                        return false;
+                }
+
+                String msg = (String) msgObj;
+		if (msg.startsWith("Followed by:")  || msg.startsWith("Follow:"))
+			out.println(msg);
+                return ((msg.startsWith("Followed by:") || msg.startsWith("Follow:")));
+	}
 
 
         @Override
@@ -272,6 +288,7 @@ public class Following extends StateTeam {
         @Override
         public void onDeath(DeathEvent e)
         {
-                sendOnDeathMessage();
+                //NOTHING
+		
         }
 }
