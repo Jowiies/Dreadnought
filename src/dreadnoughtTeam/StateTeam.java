@@ -1,10 +1,10 @@
 
 package dreadnoughtTeam;
 
+import robocode.DeathEvent;
 import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
-
 
 abstract class StateTeam 
 {
@@ -19,6 +19,7 @@ abstract class StateTeam
 		this.stateInfo.innerState = 0;
 		this.robot = robot;
 	}
+
 	protected StateTeamInfo stateInfo;
 	protected Dreadnoughts robot;
 	
@@ -30,5 +31,8 @@ abstract class StateTeam
 	
 	public abstract void onMessageReceived(MessageEvent msg);
 	
-	public abstract void onHitRobot(HitRobotEvent event);
+	public abstract void onHitRobot(HitRobotEvent e);
+
+        public abstract void onDeath(DeathEvent e);
+
 }

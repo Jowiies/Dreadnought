@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import robocode.DeathEvent;
 import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
@@ -241,6 +242,12 @@ public class Leading extends StateTeam {
 	@Override
         public void onHitRobot(HitRobotEvent event) {
                 stateInfo.innerState = 2;
+        }
+
+        @Override
+        public void onDeath(DeathEvent e)
+        {
+                //TODO
         }
 }
 

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import robocode.DeathEvent;
 import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
@@ -29,48 +30,28 @@ public class Following extends StateTeam {
         public void turn() 
         {
                 sendPosition();
+                
+                oscillate();
+               
                 robot.setAdjustRadarForRobotTurn(true);
                 robot.setAdjustRadarForGunTurn(true);
                 robot.setAdjustGunForRobotTurn(false);
-                oscillate();
-		out.println("reading = " + readyToRead);
-		
-		out.println("scanning = " + readyToScan);
-		
-		out.println("state = " + stateInfo.innerState);
+                
                 switch (stateInfo.innerState) {
+                        //case 0 -> reading possible messages ...
                         case 0 -> {
                                 messageReader();
                                 stateInfo.innerState = 1;
                         }
-
+                        //case 1 -> heading to my leader ... 
                         case 1 -> {
-                                //readyToScan = false;
-                                //	if (turnToPoint(stateInfo.followCoordX, stateInfo.followCoordY)) {
-                                //		stateInfo.innerState = 2;
-                                //		readyToScan = true;
-                                //	}
                                 readyToRead = false;
-                                //oscillate();
                                 followMyLeader();
                                 readyToRead = true;
-
                         }
-
-                        //case 2 -> Moving to the corner ...
+                        
+                        //case 2 -> Evading the enemy ...
                         case 2 -> {
-                                oscillate();
-
-                                if (goTo(stateInfo.followCoordX, stateInfo.followCoordY)) {
-                                        stateInfo.innerState = 0;
-                                        readyToRead = true;
-
-                                }
-                                //readyToRead = true;
-                        }
-                        //case 3 -> Evading the enemy ...
-
-                        case 3 -> {
 
                                 readyToScan = false;
 
@@ -78,14 +59,14 @@ public class Following extends StateTeam {
 
                                 evade();
 
-                                if (stateInfo.enemyDistance < 5) {
+                                if (stateInfo.enemyDistance < 15) {
                                         robot.back(100);
                                 } else {
                                         robot.ahead(50);
                                 }
 
-                                //stateInfo.innerState = 1;
-                                stateInfo.innerState = 1;
+                                
+                                stateInfo.innerState = 0;
 				readyToScan = true;
                         }
                 }
@@ -104,8 +85,6 @@ public class Following extends StateTeam {
                 String name = FIRST_NAME + " (" + stateInfo.following + ")";
                 if (name.equals(e.getName()))
                         return;
-                //		if (e.getName().contains(FIRST_NAME))
-                //			return;
 
                 stateInfo.enemyBearing = e.getBearing();
                 stateInfo.enemyDistance = e.getDistance();
@@ -116,18 +95,9 @@ public class Following extends StateTeam {
                 }
 
                 readyToRead = false;
-
-                // if (stateInfo.innerState == 2) {
-                //     robot.stop();
-                //     stateInfo.innerState = 3;
-                // }
-
-                // if (stateInfo.innerState == 3 && stateInfo.enemyDistance <= 200) {
-                //     robot.stop();
-                // }
                
                 robot.stop();
-                stateInfo.innerState = 3;
+                stateInfo.innerState = 2;
 
         }
 
@@ -187,43 +157,17 @@ public class Following extends StateTeam {
                 stateInfo.enemyY = robot.getY() + stateInfo.enemyDistance * Math.cos(absoluteBearing);
         }
 
-       // private boolean turnToPoint(double x, double y) {
-       //         double radarAngle = robot.getHeadingRadians()
-       //                 - robot.getRadarHeadingRadians();
-
-       //         if (Math.abs(getAngleToPoint(x, y)) > 0.1 || Math.abs(radarAngle) > 0.1) {
-       //                 robot.setTurnRightRadians(getAngleToPoint(x, y));
-       //                 robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
-       //                 return false;
-       //         }
-       //         return true;
-       // }
-
-        private boolean goTo(double x, double y) {
-
-                double distance = getDistanceToPoint(x, y);
-
-                if (Math.abs(distance) <= 50)
-                        return true;
-
-                if (distance >= 50)
-                        robot.setAhead(distance);
-
-
-                return false;
-
-        }
-
         private void evade() {
                 double turnAngle;
 
-                if (stateInfo.enemyDistance >= 150) {
-                        turnAngle = 30;
-                } else if (stateInfo.enemyDistance >= 125) {
+                if (stateInfo.enemyDistance >= 150) turnAngle = 30;
+                else if (stateInfo.enemyDistance >= 125) {
                         turnAngle = 45;
-                } else if (stateInfo.enemyDistance >= 100) {
+                } 
+                else if (stateInfo.enemyDistance >= 100) {
                         turnAngle = 60;
-                } else {
+                } 
+                else {
                         turnAngle = 90;
                 }
 
@@ -285,18 +229,49 @@ public class Following extends StateTeam {
 
                         stateInfo.followCoordX = Double.parseDouble(coords[0]);
                         stateInfo.followCoordY = Double.parseDouble(coords[1]);
+                } 
+                else if (msg.startsWith("For now on you're being followed by:")) {
+                        stateInfo.followed = (byte)Integer.parseInt(msg.split(":")[1].trim());
                 }
+                else if (msg.startsWith("For now on you follow:")) {
+                        stateInfo.followed = (byte)Integer.parseInt(msg.split(":")[1].trim());
+                }
+                else if (msg.startsWith("For now on you are the leader")) {
+                        //TODO
+                }
+                
         }
 
-       // private byte getIdFromName(String name) {
-       //         return (byte) Character.getNumericValue(name.charAt(name.length() - 2));
-       // }
+       private void sendOnDeathMessage()
+       {
+                try {
+                        robot.sendMessage(FIRST_NAME +" (" + stateInfo.followed + ")",
+                                        "For now on you're being followed by: " + stateInfo.followed);
+                        out.println(FIRST_NAME +" (" + stateInfo.followed + ") For now on you're being followed by: " + stateInfo.followed);
+                       
+                        if (stateInfo.followed == -1)
+                                return;
+
+                        robot.sendMessage(FIRST_NAME +" (" + stateInfo.followed + ")",
+                                        "For now on you follow: " + stateInfo.following);
+                        out.println(FIRST_NAME +" (" + stateInfo.followed + ") For now on you follow: " + stateInfo.following);
+                } 
+                catch (IOException ex) {
+                        Logger.getLogger(Following.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+       };
 
 
         @Override
         public void onHitRobot(HitRobotEvent event) {
 
-                stateInfo.innerState = 3;
+                stateInfo.innerState = 2;
         }
 
+        @Override
+        public void onDeath(DeathEvent e)
+        {
+                sendOnDeathMessage();
+        }
 }

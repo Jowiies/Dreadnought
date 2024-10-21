@@ -1,6 +1,7 @@
 
 package dreadnoughtTeam;
 
+import robocode.DeathEvent;
 import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
@@ -46,6 +47,12 @@ public class Dreadnoughts extends TeamRobot
 	{
 		state.onHitRobot(e);
 	}
+
+        @Override
+        public void onDeath(DeathEvent e)
+        {
+                state.onDeath(e);
+        }
 	
 	private void setState()
 	{

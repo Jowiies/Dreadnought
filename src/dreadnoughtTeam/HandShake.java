@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import robocode.DeathEvent;
 
 import robocode.HitRobotEvent;
 import robocode.MessageEvent;
@@ -236,6 +237,12 @@ public class HandShake extends StateTeam
         @Override
         public void onHitRobot(HitRobotEvent event) 
 	{
+                robot.back(50);
                 stateInfo.innerState = 2;
         }
+
+	@Override
+	public void onDeath(DeathEvent e) {
+		//TODO
+	}
 }
