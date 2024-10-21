@@ -176,8 +176,8 @@ public class Following extends StateTeam {
                 y = y - robot.getY();
 
                 return Utils.normalRelativeAngle(
-                                Math.atan2(x, y) - robot.getHeadingRadians()
-                                );
+                        Math.atan2(x, y) - robot.getHeadingRadians()
+                );
         }
 
         private void getEnemyCoords() {
@@ -187,17 +187,17 @@ public class Following extends StateTeam {
                 stateInfo.enemyY = robot.getY() + stateInfo.enemyDistance * Math.cos(absoluteBearing);
         }
 
-        private boolean turnToPoint(double x, double y) {
-                double radarAngle = robot.getHeadingRadians()
-                        - robot.getRadarHeadingRadians();
+       // private boolean turnToPoint(double x, double y) {
+       //         double radarAngle = robot.getHeadingRadians()
+       //                 - robot.getRadarHeadingRadians();
 
-                if (Math.abs(getAngleToPoint(x, y)) > 0.1 || Math.abs(radarAngle) > 0.1) {
-                        robot.setTurnRightRadians(getAngleToPoint(x, y));
-                        robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
-                        return false;
-                }
-                return true;
-        }
+       //         if (Math.abs(getAngleToPoint(x, y)) > 0.1 || Math.abs(radarAngle) > 0.1) {
+       //                 robot.setTurnRightRadians(getAngleToPoint(x, y));
+       //                 robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
+       //                 return false;
+       //         }
+       //         return true;
+       // }
 
         private boolean goTo(double x, double y) {
 
@@ -288,9 +288,9 @@ public class Following extends StateTeam {
                 }
         }
 
-        private byte getIdFromName(String name) {
-                return (byte) Character.getNumericValue(name.charAt(name.length() - 2));
-        }
+       // private byte getIdFromName(String name) {
+       //         return (byte) Character.getNumericValue(name.charAt(name.length() - 2));
+       // }
 
 
         @Override

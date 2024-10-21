@@ -1,18 +1,15 @@
 
 package dreadnoughtTeam;
 
-import java.io.IOException;
 import static java.lang.System.out;
+
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
-import java.io.IOException;
-import static java.lang.System.out;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import robocode.HitRobotEvent;
-import robocode.Rules;
 import robocode.util.Utils;
 
 public class Leading extends StateTeam {
@@ -93,7 +90,7 @@ public class Leading extends StateTeam {
         @Override
         public void onMessageReceived(MessageEvent msg) 
         {
-                /*TODO*/
+                /*NOTHING*/
         }
 
 	@Override
@@ -138,22 +135,22 @@ public class Leading extends StateTeam {
                 }
         }
 
-        private double[] getNearCorner() {
+       // private double[] getNearCorner() {
 
-                double[] mostProperaCantonada = corners[0];
-                double minDistancia = getDistanceToPoint(corners[0][0], corners[0][1]);
+       //         double[] mostProperaCantonada = corners[0];
+       //         double minDistancia = getDistanceToPoint(corners[0][0], corners[0][1]);
 
-                for (double[] corner : corners) {
-                        double dist = getDistanceToPoint(corner[0], corner[1]);
+       //         for (double[] corner : corners) {
+       //                 double dist = getDistanceToPoint(corner[0], corner[1]);
 
-                        if (dist < minDistancia) {
-                                minDistancia = dist;
-                                mostProperaCantonada = corner;
-                        }
-                }
+       //                 if (dist < minDistancia) {
+       //                         minDistancia = dist;
+       //                         mostProperaCantonada = corner;
+       //                 }
+       //         }
 
-                return mostProperaCantonada;
-        }
+       //         return mostProperaCantonada;
+       // }
 	
 	private double getDistanceToPoint(double x, double y) {
 		x = x - robot.getX();
