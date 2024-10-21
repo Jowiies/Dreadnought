@@ -11,6 +11,7 @@ import java.io.IOException;
 import static java.lang.System.out;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import robocode.HitRobotEvent;
 import robocode.Rules;
 import robocode.util.Utils;
 
@@ -238,6 +239,12 @@ public class Leading extends StateTeam {
 		}
 
 	}
+	
+	
+	@Override
+        public void onHitRobot(HitRobotEvent event) {
+                stateInfo.innerState = 2;
+        }
 }
 
 

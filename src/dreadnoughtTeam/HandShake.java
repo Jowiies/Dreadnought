@@ -1,7 +1,8 @@
 package dreadnoughtTeam;
 
-import java.io.IOException;
 import static java.lang.System.out;
+
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,6 +11,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
 
@@ -228,4 +231,11 @@ public class HandShake extends StateTeam
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {/* DO NOTHING */}
+
+        
+        @Override
+        public void onHitRobot(HitRobotEvent event) 
+	{
+                stateInfo.innerState = 2;
+        }
 }

@@ -1,6 +1,7 @@
 
 package dreadnoughtTeam;
 
+import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
 
@@ -27,5 +28,7 @@ abstract class StateTeam
 	
 	public abstract void onScannedRobot(ScannedRobotEvent e);
 	
-	public abstract void onMessageReceived(MessageEvent msg); 
+	public abstract void onMessageReceived(MessageEvent msg);
+	
+	public abstract void onHitRobot(HitRobotEvent event);
 }

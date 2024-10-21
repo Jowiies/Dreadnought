@@ -1,11 +1,7 @@
 
 package dreadnoughtTeam;
 
-import dreadnoughtTeam.Leading;
-import dreadnoughtTeam.StateTeam;
-import dreadnoughtTeam.StateTeamInfo;
-import dreadnoughtTeam.Following;
-import dreadnoughtTeam.HandShake;
+import robocode.HitRobotEvent;
 import robocode.MessageEvent;
 import robocode.ScannedRobotEvent;
 import robocode.TeamRobot;
@@ -43,6 +39,12 @@ public class Dreadnoughts extends TeamRobot
 	public void onMessageReceived(MessageEvent msg) 
 	{
 		state.onMessageReceived(msg);
+	}
+	
+	@Override
+	public void onHitRobot(HitRobotEvent e)
+	{
+		state.onHitRobot(e);
 	}
 	
 	private void setState()

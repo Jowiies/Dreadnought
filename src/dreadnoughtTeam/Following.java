@@ -1,122 +1,135 @@
 package dreadnoughtTeam;
 
-import robocode.MessageEvent;
-import robocode.ScannedRobotEvent;
-import java.io.IOException;
 import static java.lang.System.out;
+
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import robocode.HitRobotEvent;
+import robocode.MessageEvent;
+import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
 public class Following extends StateTeam {
 
         private boolean readyToRead;
-	private boolean turnRadarRight;
-	private boolean readyToScan;
+        private boolean turnRadarRight;
+        private boolean readyToScan;
 
         public Following(StateTeamInfo stateInfo, Dreadnoughts robot) 
         {
                 super(stateInfo, robot);
                 readyToRead = true;
-		readyToScan = false;
-		turnRadarRight = true;
+                readyToScan = false;
+                turnRadarRight = true;
         }
 
         @Override
         public void turn() 
         {
                 sendPosition();
-		robot.setAdjustRadarForRobotTurn(true);
-		robot.setAdjustRadarForGunTurn(true);
-		robot.setAdjustGunForRobotTurn(false);
+                robot.setAdjustRadarForRobotTurn(true);
+                robot.setAdjustRadarForGunTurn(true);
+                robot.setAdjustGunForRobotTurn(false);
+                oscillate();
+		out.println("reading = " + readyToRead);
+		
+		out.println("scanning = " + readyToScan);
+		
+		out.println("state = " + stateInfo.innerState);
                 switch (stateInfo.innerState) {
                         case 0 -> {
                                 messageReader();
                                 stateInfo.innerState = 1;
                         }
-			
+
                         case 1 -> {
-				readyToScan = false;
-				if (turnToPoint(stateInfo.followCoordX, stateInfo.followCoordY)) {
-					stateInfo.innerState = 2;
-					readyToScan = true;
-				}
-//				readyToRead = false;
-//				oscillate();
-//				followMyLeader();
-//				readyToRead = true;
-				
-			}
+                                //readyToScan = false;
+                                //	if (turnToPoint(stateInfo.followCoordX, stateInfo.followCoordY)) {
+                                //		stateInfo.innerState = 2;
+                                //		readyToScan = true;
+                                //	}
+                                readyToRead = false;
+                                //oscillate();
+                                followMyLeader();
+                                readyToRead = true;
 
-			//case 2 -> Moving to the corner ...
-			case 2 -> {
-				oscillate();
-				
-				if (goTo(stateInfo.followCoordX, stateInfo.followCoordY)) {
-					stateInfo.innerState = 0;
-					readyToRead = true;
-					
-				}
-				//readyToRead = true;
-			}
-			//case 3 -> Evading the enemy ...
+                        }
 
-			case 3 -> {
-				
-				readyToScan = false;
-				
-				robot.setAdjustRadarForRobotTurn(false);
+                        //case 2 -> Moving to the corner ...
+                        case 2 -> {
+                                oscillate();
 
-				evade();
+                                if (goTo(stateInfo.followCoordX, stateInfo.followCoordY)) {
+                                        stateInfo.innerState = 0;
+                                        readyToRead = true;
 
-				if (stateInfo.enemyDistance < 5) {
-					robot.back(100);
-				} else {
-					robot.ahead(50);
-				}
+                                }
+                                //readyToRead = true;
+                        }
+                        //case 3 -> Evading the enemy ...
 
-				stateInfo.innerState = 1;
-			}
+                        case 3 -> {
+
+                                readyToScan = false;
+
+                                robot.setAdjustRadarForRobotTurn(false);
+
+                                evade();
+
+                                if (stateInfo.enemyDistance < 5) {
+                                        robot.back(100);
+                                } else {
+                                        robot.ahead(50);
+                                }
+
+                                //stateInfo.innerState = 1;
+                                stateInfo.innerState = 1;
+				readyToScan = true;
+                        }
                 }
         }
 
         @Override
-	public void onScannedRobot(ScannedRobotEvent e) {
-		if (stateInfo.fi) {
-			return;
-		}
+        public void onScannedRobot(ScannedRobotEvent e) {
+                if (stateInfo.fi) {
+                        return;
+                }
 
-		if (!readyToScan) {
-			return;
-		}
-		
-		String name = FIRST_NAME + " (" + stateInfo.following + ")";
-		if (name.equals(e.getName()))
-			return;
-//		if (e.getName().contains(FIRST_NAME))
-//			return;
-		
-		stateInfo.enemyBearing = e.getBearing();
-		stateInfo.enemyDistance = e.getDistance();
-		getEnemyCoords();
+                if (!readyToScan) {
+                        return;
+                }
 
-		if (stateInfo.enemyDistance > 200) {
-			return;
-		}
-		
-		readyToRead = false;
-		
-		if (stateInfo.innerState == 2) {
-			robot.stop();
-			stateInfo.innerState = 3;
-		}
+                String name = FIRST_NAME + " (" + stateInfo.following + ")";
+                if (name.equals(e.getName()))
+                        return;
+                //		if (e.getName().contains(FIRST_NAME))
+                //			return;
 
-		if (stateInfo.innerState == 3 && stateInfo.enemyDistance <= 200) {
-			robot.stop();
-		}
+                stateInfo.enemyBearing = e.getBearing();
+                stateInfo.enemyDistance = e.getDistance();
+                getEnemyCoords();
 
-	}
+                if (stateInfo.enemyDistance > 200) {
+                        return;
+                }
+
+                readyToRead = false;
+
+                // if (stateInfo.innerState == 2) {
+                //     robot.stop();
+                //     stateInfo.innerState = 3;
+                // }
+
+                // if (stateInfo.innerState == 3 && stateInfo.enemyDistance <= 200) {
+                //     robot.stop();
+                // }
+               
+                robot.stop();
+                stateInfo.innerState = 3;
+
+        }
 
         @Override
         public void onMessageReceived(MessageEvent msg) 
@@ -163,82 +176,82 @@ public class Following extends StateTeam {
                 y = y - robot.getY();
 
                 return Utils.normalRelativeAngle(
-                        Math.atan2(x, y) - robot.getHeadingRadians()
-                );
+                                Math.atan2(x, y) - robot.getHeadingRadians()
+                                );
         }
-	
-	private void getEnemyCoords() {
-		double absoluteBearing = Math.toRadians(robot.getHeading() + stateInfo.enemyBearing);
 
-		stateInfo.enemyX = robot.getX() + stateInfo.enemyDistance * Math.sin(absoluteBearing);
-		stateInfo.enemyY = robot.getY() + stateInfo.enemyDistance * Math.cos(absoluteBearing);
-	}
+        private void getEnemyCoords() {
+                double absoluteBearing = Math.toRadians(robot.getHeading() + stateInfo.enemyBearing);
 
-	private boolean turnToPoint(double x, double y) {
-		double radarAngle = robot.getHeadingRadians()
-			- robot.getRadarHeadingRadians();
+                stateInfo.enemyX = robot.getX() + stateInfo.enemyDistance * Math.sin(absoluteBearing);
+                stateInfo.enemyY = robot.getY() + stateInfo.enemyDistance * Math.cos(absoluteBearing);
+        }
 
-		if (Math.abs(getAngleToPoint(x, y)) > 0.1 || Math.abs(radarAngle) > 0.1) {
-			robot.setTurnRightRadians(getAngleToPoint(x, y));
-			robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
-			return false;
-		}
-		return true;
-	}
+        private boolean turnToPoint(double x, double y) {
+                double radarAngle = robot.getHeadingRadians()
+                        - robot.getRadarHeadingRadians();
 
-	private boolean goTo(double x, double y) {
+                if (Math.abs(getAngleToPoint(x, y)) > 0.1 || Math.abs(radarAngle) > 0.1) {
+                        robot.setTurnRightRadians(getAngleToPoint(x, y));
+                        robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
+                        return false;
+                }
+                return true;
+        }
 
-		double distance = getDistanceToPoint(x, y);
+        private boolean goTo(double x, double y) {
 
-		if (Math.abs(distance) <= 50)
-			return true;
-		
-		if (distance >= 50)
-			robot.setAhead(distance);
-		
-		
-		return false;
-		
-	}
+                double distance = getDistanceToPoint(x, y);
 
-	private void evade() {
-		double turnAngle;
+                if (Math.abs(distance) <= 50)
+                        return true;
 
-		if (stateInfo.enemyDistance >= 150) {
-			turnAngle = 30;
-		} else if (stateInfo.enemyDistance >= 125) {
-			turnAngle = 45;
-		} else if (stateInfo.enemyDistance >= 100) {
-			turnAngle = 60;
-		} else {
-			turnAngle = 90;
-		}
+                if (distance >= 50)
+                        robot.setAhead(distance);
 
-		if (stateInfo.enemyBearing < 0) {
-			robot.turnRight(turnAngle);
-		} else {
-			robot.turnLeft(turnAngle);
-		}
-	}
 
-	private void oscillate() {
-		double radarAngle = robot.getHeadingRadians()
-			- robot.getRadarHeadingRadians();
+                return false;
 
-		robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
+        }
 
-		double oscillation = Math.toRadians(13);
+        private void evade() {
+                double turnAngle;
 
-		if (Math.abs(radarAngle) < 0.01) {
-			if (turnRadarRight) {
-				robot.setTurnRadarRightRadians(oscillation);
-			} else {
-				robot.setTurnRadarLeftRadians(oscillation);
-			}
-			turnRadarRight = !turnRadarRight;
-		}
+                if (stateInfo.enemyDistance >= 150) {
+                        turnAngle = 30;
+                } else if (stateInfo.enemyDistance >= 125) {
+                        turnAngle = 45;
+                } else if (stateInfo.enemyDistance >= 100) {
+                        turnAngle = 60;
+                } else {
+                        turnAngle = 90;
+                }
 
-	}
+                if (stateInfo.enemyBearing < 0) {
+                        robot.turnRight(turnAngle);
+                } else {
+                        robot.turnLeft(turnAngle);
+                }
+        }
+
+        private void oscillate() {
+                double radarAngle = robot.getHeadingRadians()
+                        - robot.getRadarHeadingRadians();
+
+                robot.setTurnRadarRightRadians(Utils.normalRelativeAngle(radarAngle));
+
+                double oscillation = Math.toRadians(13);
+
+                if (Math.abs(radarAngle) < 0.01) {
+                        if (turnRadarRight) {
+                                robot.setTurnRadarRightRadians(oscillation);
+                        } else {
+                                robot.setTurnRadarLeftRadians(oscillation);
+                        }
+                        turnRadarRight = !turnRadarRight;
+                }
+
+        }
 
 
         private void sendPosition()
@@ -274,10 +287,16 @@ public class Following extends StateTeam {
                         stateInfo.followCoordY = Double.parseDouble(coords[1]);
                 }
         }
-	
-	private byte getIdFromName(String name) {
-		return (byte) Character.getNumericValue(name.charAt(name.length() - 2));
-	}
-	
+
+        private byte getIdFromName(String name) {
+                return (byte) Character.getNumericValue(name.charAt(name.length() - 2));
+        }
+
+
+        @Override
+        public void onHitRobot(HitRobotEvent event) {
+
+                stateInfo.innerState = 3;
+        }
 
 }
